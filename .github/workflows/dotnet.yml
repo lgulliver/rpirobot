@@ -19,10 +19,10 @@ jobs:
         dotnet-version: 5.0.x
     - name: Restore dependencies
       run: dotnet restore
-      working-directory: ${{ github.event.repository.name }}/robot_web
+      working-directory: robot_web
     - name: Build
       run: dotnet build --no-restore
-      working-directory: ${{ github.event.repository.name }}/robot_web
+      working-directory: robot_web
     - name: Test
       run: dotnet test --no-build --verbosity normal
-      working-directory: ${{ github.event.repository.name }}/robot_web
+      working-directory: robot_web
