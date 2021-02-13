@@ -23,6 +23,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
       working-directory: robot_web
-    - name: Publish
-      run: dotnet publish --no-build -c Release -o publish
+    - name: dotnet publish
+      run: |
+        dotnet publish -c Release -o app-publish 
       working-directory: robot_web
