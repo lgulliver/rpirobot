@@ -23,6 +23,6 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
       working-directory: robot_web
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
+    - name: Publish
+      run: dotnet publish --no-build -c Release -o /publish
       working-directory: robot_web
