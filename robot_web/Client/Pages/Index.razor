@@ -8,7 +8,8 @@
     <div class="row">
         <div class="col col-md-8">
             <div class="embed-responsive embed-responsive-16by9">
-                <iframe src="https://obs.ninja/?view=robot&scene&room=bcsdemo&password=BCSDemo1234" class="embed-responsive-item" />
+                <iframe src="https://obs.ninja/?view=robot&scene&room=bcsdemo&password=BCSDemo1234"
+                    class="embed-responsive-item" />
             </div>
         </div>
         <div class="col col-md-4" style="max-height: 380px; overflow-y: scroll;" id="messagesDiv">
@@ -21,16 +22,15 @@
         </div>
     </div>
     <div class="row">
-        <div class="col col-md-2">
-            <div class="form-group">
-                <label>
-                    User:
-                    <input @bind="userInput" />
-                </label>
+        <div class="col col-md-8">
+            Name: <input @bind="userInput" />
+
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-secondary" @onclick="@(e => MoveRobot("servo1", "left", 100))"><span class="oi oi-arrow-thick-left"></span></button>
+                <button type="button" class="btn btn-secondary" @onclick="@(e => MoveRobot("servo1", "right", 80))"><span class="oi oi-arrow-thick-right"></span></button>
+                <button type="button" class="btn btn-secondary" @onclick="@(e => MoveRobot("servo2", "up", 100))"><span class="oi oi-arrow-thick-top"></span></button>
+                <button type="button" class="btn btn-secondary" @onclick="@(e => MoveRobot("servo2", "down", 80))"><span class="oi oi-arrow-thick-bottom"></span></button>
             </div>
-        </div>
-        <div class="col col-md-6">
-            BUTTONS HERE
         </div>
         <div class="col col-md-4">&nbsp;</div>
     </div>
@@ -40,21 +40,24 @@
     <label>
         Servo 1 (@servo1):
     </label>
-    <MatSlider @bind-Value="@servo1" Immediate="true" Step="1" EnableStep="true" ValueMin="0" ValueMax="180" Markers="true" Pin="true" TValue="int" Discrete="true"></MatSlider>
+    <MatSlider @bind-Value="@servo1" Immediate="true" Step="1" EnableStep="true" ValueMin="0" ValueMax="180"
+        Markers="true" Pin="true" TValue="int" Discrete="true"></MatSlider>
 </div>
 
 <div class="form-group row">
     <label>
         Servo 2 (@servo2):
     </label>
-    <MatSlider @bind-Value="@servo2" Immediate="true" Step="1" EnableStep="true" ValueMin="0" ValueMax="180" Markers="true" Pin="true" TValue="int" Discrete="true"></MatSlider>
+    <MatSlider @bind-Value="@servo2" Immediate="true" Step="1" EnableStep="true" ValueMin="0" ValueMax="180"
+        Markers="true" Pin="true" TValue="int" Discrete="true"></MatSlider>
 </div>
 
 <div class="form-group row">
     <label>
         Servo 3 (@servo3):
     </label>
-    <MatSlider @bind-Value="@servo3" Immediate="true" Step="1" EnableStep="true" ValueMin="0" ValueMax="180" Markers="true" Pin="true" TValue="int" Discrete="true"></MatSlider>
+    <MatSlider @bind-Value="@servo3" Immediate="true" Step="1" EnableStep="true" ValueMin="0" ValueMax="180"
+        Markers="true" Pin="true" TValue="int" Discrete="true"></MatSlider>
 </div>
 
 
@@ -62,8 +65,6 @@
 
 
 @code {
-
-
     private HubConnection hubConnection;
     private List<string> messages = new List<string>();
     private string userInput;
@@ -76,7 +77,7 @@
             .Build();
 
         hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
-        {
+            {
             var encodedMsg = $"{user}: {message}";
             messages.Add(encodedMsg);
             StateHasChanged();
@@ -133,5 +134,10 @@
     private int _servo1 = 90;
     private int _servo2 = 90;
     private int _servo3 = 90;
+
+    private void MoveRobot(string servo, string direction, int deg) {
+        StateHasChanged();
+        hubConnection.SendAsync("SendMessage", servo, deg.ToString());        
+    }   
 
 }
