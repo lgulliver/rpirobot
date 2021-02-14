@@ -1,6 +1,7 @@
 ﻿@page "/"
 
 @using Microsoft.AspNetCore.SignalR.Client
+@using System.Timers
 @inject NavigationManager NavigationManager
 @implements IAsyncDisposable
 
@@ -23,15 +24,21 @@
     </div>
 </div>
 
-<div class="form-group row">
+<div class="form-group row" hidden="@servo1Disabled">
     <label>
         Rotation (@servo1):
-    </label>     
+    </label>         
     <MatSlider Value="@servo1" Immediate="true" Step="1" EnableStep="true" ValueMin="0" ValueMax="180"
         Markers="true" Pin="true" TValue="int" Discrete="true" ValueChanged="@UpdateServo1Value"></MatSlider>
 </div>
 
-<div class="form-group row">
+<div class="form-group row" hidden="@(!servo1Disabled)">
+    <label>
+        Rotation (@servo1): Please wait...
+    </label>         
+</div>
+
+<div class="form-group row" hidden="@servo2Disabled">
     <label>
         Reach (@servo2):
     </label>
@@ -39,7 +46,13 @@
         Markers="true" Pin="true" TValue="int" Discrete="true" ValueChanged="@UpdateServo2Value"></MatSlider>
 </div>
 
-<div class="form-group row">
+<div class="form-group row" hidden="@(!servo2Disabled)">
+    <label>
+        Rotation (@servo2): Please wait...
+    </label>         
+</div>
+
+<div class="form-group row" hidden="@servo3Disabled">
     <label>
         Grip (@servo3):
     </label>
@@ -47,6 +60,11 @@
         Markers="true" Pin="true" TValue="int" Discrete="true" ValueChanged="@UpdateServo3Value"></MatSlider>
 </div>
 
+<div class="form-group row" hidden="@(!servo3Disabled)">
+    <label>
+        Rotation (@servo3): Please wait...
+    </label>         
+</div>
 
 @code {
     private HubConnection hubConnection;
@@ -54,11 +72,19 @@
     private string userInput;
     private string messageInput;
 
+    private Timer disableServo1Timer = new Timer(1000);
+    private Timer disableServo2Timer = new Timer(1000);
+    private Timer disableServo3Timer = new Timer(1000);
+
     protected override async Task OnInitializedAsync()
     {
         hubConnection = new HubConnectionBuilder()
             .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
             .Build();
+
+        disableServo1Timer.Elapsed += servo1DisableTimerExpired;
+        disableServo2Timer.Elapsed += servo2DisableTimerExpired;
+        disableServo3Timer.Elapsed += servo3DisableTimerExpired;
 
         hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
             {
@@ -69,14 +95,29 @@
             {
                 case "servo1":
                     servo1 = Int32.Parse(message);
-                    StateHasChanged();
+
+                    servo1Disabled = true;
+                    disableServo1Timer.AutoReset = false;
+                    disableServo1Timer.Start();                    
+
+                    StateHasChanged();                    
                     break;      
                 case "servo2":
                     servo2 = Int32.Parse(message);
+
+                    servo2Disabled = true;
+                    disableServo2Timer.AutoReset = false;
+                    disableServo2Timer.Start(); 
+
                     StateHasChanged();
                     break;   
                 case "servo3":
                     servo3 = Int32.Parse(message);
+
+                    servo3Disabled = true;
+                    disableServo3Timer.AutoReset = false;
+                    disableServo3Timer.Start(); 
+
                     StateHasChanged();
                     break;                                                                               
                 default:
@@ -95,6 +136,22 @@
     public bool IsConnected =>
         hubConnection.State == HubConnectionState.Connected;
 
+
+    private void servo1DisableTimerExpired(Object source, ElapsedEventArgs e) {
+        servo1Disabled = false;
+        StateHasChanged();  
+    }
+
+    private void servo2DisableTimerExpired(Object source, ElapsedEventArgs e) {
+        servo2Disabled = false;
+        StateHasChanged();  
+    }
+
+    private void servo3DisableTimerExpired(Object source, ElapsedEventArgs e) {
+        servo3Disabled = false;
+        StateHasChanged();  
+    }
+
     public async ValueTask DisposeAsync()
     {
         await hubConnection.DisposeAsync();
@@ -105,6 +162,12 @@
     public int servo2 { get; set; } = 90;
 
     public int servo3 { get; set; } = 90;
+
+    public bool servo1Disabled { get; set; } = false;
+
+    public bool servo2Disabled { get; set; } = false;
+
+    public bool servo3Disabled { get; set; } = false;
 
     private void UpdateServo1Value(int val) {
         servo1 = val;
