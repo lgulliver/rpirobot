@@ -17,6 +17,9 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
+    - name: Clean
+      run: dotnet clean
+      working-directory: robot_web        
     - name: Restore dependencies
       run: dotnet restore
       working-directory: robot_web
