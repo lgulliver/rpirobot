@@ -52,6 +52,7 @@ namespace robot_firmware
                         ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator,
                     };                    
                 })
+                .WithAutomaticReconnect()
                 .Build();
             
             try
