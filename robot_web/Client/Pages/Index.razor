@@ -21,25 +21,13 @@
             </ul>
         </div>
     </div>
-    <div class="row">
-        <div class="col col-md-8">
-            @* Name: <input @bind="userInput" />
-
-            <div class="btn-group" role="group">
-                <button type="button" class="btn btn-secondary" @onclick="@(e => MoveRobot("servo1", "left", 100))"><span class="oi oi-arrow-thick-left"></span></button>
-                <button type="button" class="btn btn-secondary" @onclick="@(e => MoveRobot("servo1", "right", 80))"><span class="oi oi-arrow-thick-right"></span></button>
-                <button type="button" class="btn btn-secondary" @onclick="@(e => MoveRobot("servo2", "up", 100))"><span class="oi oi-arrow-thick-top"></span></button>
-                <button type="button" class="btn btn-secondary" @onclick="@(e => MoveRobot("servo2", "down", 80))"><span class="oi oi-arrow-thick-bottom"></span></button>
-            </div> *@
-        </div>
-        <div class="col col-md-4">&nbsp;</div>
-    </div>
 </div>
 
 <div class="form-group row">
     <label>
         Servo 1 (@servo1):
     </label>
+     <MatTextField @bind-Value="@servo1" Label="Value"></MatTextField>
     <MatSlider Value="@servo1" Immediate="true" Step="1" EnableStep="true" ValueMin="0" ValueMax="180"
         Markers="true" Pin="true" TValue="int" Discrete="true" ValueChanged="@UpdateServo1Value"></MatSlider>
 </div>
@@ -85,6 +73,7 @@
             {
                 case "servo1":
                     servo1 = Int32.Parse(message);
+                    StateHasChanged();
                     break;                                              
                 default:
                     break;
