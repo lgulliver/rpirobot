@@ -56,7 +56,7 @@
     <label>
         Grab (@servo3):
     </label>
-    <MatSlider Value="@servo3" Immediate="true" Step="1" EnableStep="true" ValueMin="0" ValueMax="90"
+    <MatSlider Value="@servo3" Immediate="true" Step="1" EnableStep="true" ValueMin="75" ValueMax="180"
         Markers="true" Pin="true" TValue="int" Discrete="true" ValueChanged="@UpdateServo3Value"></MatSlider>
 </div>
 
@@ -161,7 +161,7 @@
 
     public int servo2 { get; set; } = 90;
 
-    public int servo3 { get; set; } = 45;
+    public int servo3 { get; set; } = 130;
 
     public bool servo1Disabled { get; set; } = false;
 
